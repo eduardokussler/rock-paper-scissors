@@ -20,7 +20,7 @@ function userPlay() {
   return userMove;
 }
 
-function playRound(userMove, computerMove) {
+function playRound(userMove) {
   // returns an object containing the message, the points for the User and 
   // for the computer
   let result = {
@@ -28,6 +28,7 @@ function playRound(userMove, computerMove) {
     userPoints: 0,
     computerPoints: 0
 }
+  let computerMove = computerPlay();
   if(userMove === computerMove) {
     result.message = `It's a tie! Both you and the computer played ${userMove}` 
     result.computerPoints = 0;
@@ -63,28 +64,53 @@ function playRound(userMove, computerMove) {
   }
   return result;
 }
+let computerPoints = 0;
+let userPoints = 0;
+const GAMES_TO_WIN = 5;
+const gameDiv = document.querySelector('#game');
 
-function game() {
-  let computerPoints = 0;
-  let userPoints = 0;
-  for(let i = 0; i < 5; i++) {
-    let userMove = userPlay();
-    let computerMove = computerPlay();
-    let result = playRound(userMove, computerMove);
-    console.log(result.message);
+const rock = document.createElement('button');
+rock.textContent = 'rock';
+const paper = document.createElement('button');
+paper.textContent = 'paper';
+const scissors = document.createElement('button');
+scissors.textContent = 'scissors';
+gameDiv.appendChild(rock);
+gameDiv.appendChild(paper);
+gameDiv.appendChild(scissors);
+const buttons = document.querySelectorAll('button');
+const userPointsDiv = document.querySelector('#userPoints');
+const computerPointsDiv = document.querySelector('#computerPoints')
+userPointsDiv.textContent = `User points: ${userPoints}`;
+computerPointsDiv.textContent = `Computer points: ${computerPoints}`;    
+let roundResult = document.createElement('div');
+roundResult.textContent = 'The result of each round will be displayed here.';
+gameDiv.appendChild(roundResult);
+buttons.forEach(button => {
+  button.addEventListener('click', (event) => {
+    let move = button.innerText;
+    let result = playRound(move);
     computerPoints += result.computerPoints;
     userPoints += result.userPoints;
-  }
-  if(userPoints > computerPoints) {
-    console.log('Congratulations! You won!');
-  } else if (userPoints < computerPoints) {
-    console.log('You lost! Try again!')
-  } else {
-    console.log(`It's a tie!`);
-  }
-  let answer = prompt('Play again? Y/N: ');
-  if(answer === 'Y') {
-    game();
-  }
-}
-game();
+    roundResult.textContent = result.message;
+    userPointsDiv.textContent = `User points: ${userPoints}`;
+    computerPointsDiv.textContent = `Computer points: ${computerPoints}`;  
+    if(computerPoints === GAMES_TO_WIN) {
+      alert('The computer won! Try again');
+    }
+    if(userPoints === GAMES_TO_WIN) {
+      alert('You won!');
+    }
+  })
+})
+
+const resetDiv = document.querySelector('#reset');
+const resetButton = document.createElement('button');
+resetButton.textContent = 'reset';
+resetButton.addEventListener('click', () => {
+  userPoints = 0;
+  computerPoints = 0;
+  userPointsDiv.textContent = `User points: ${userPoints}`;
+    computerPointsDiv.textContent = `Computer points: ${computerPoints}`;  
+})
+resetDiv.appendChild(resetButton);
